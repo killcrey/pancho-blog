@@ -32,8 +32,6 @@ export function SiteHeader() {
           </Link>
           <a
             href="https://theinvisiblepanchos.com"
-            target="_blank"
-            rel="noopener noreferrer"
             className="hover:text-gold transition-colors"
           >
             Base
