@@ -1,26 +1,99 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --color-bg: #05020a;
+  --color-fg: #ffffff;
+  --color-gold: #d4af37;
+  --color-muted: #a3a3ad;
+  --color-border: rgba(212, 175, 55, 0.25);
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-bg: var(--color-bg);
+  --color-fg: var(--color-fg);
+  --color-gold: var(--color-gold);
+  --color-muted: var(--color-muted);
+  --color-border: var(--color-border);
+  --font-sans: var(--font-rajdhani);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  background: var(--color-bg);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-bg);
+  color: var(--color-fg);
+  font-family: var(--font-rajdhani), sans-serif;
+  letter-spacing: 0.01em;
+}
+
+.bg-panchos {
+  position: relative;
+}
+
+.bg-panchos::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background-image: linear-gradient(
+      180deg,
+      rgba(5, 2, 10, 0.88) 0%,
+      rgba(5, 2, 10, 0.94) 60%,
+      #05020a 100%
+    ),
+    url("/background-image.jpg");
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+}
+
+.text-glow {
+  text-shadow: 0 0 24px rgba(212, 175, 55, 0.35);
+}
+
+.panel {
+  background: rgba(10, 6, 18, 0.7);
+  border: 1px solid var(--color-border);
+  backdrop-filter: blur(6px);
+}
+
+.prose-panchos {
+  color: var(--color-fg);
+}
+
+.prose-panchos h1,
+.prose-panchos h2,
+.prose-panchos h3 {
+  color: var(--color-fg);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.prose-panchos a {
+  color: var(--color-gold);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.prose-panchos img {
+  border: 1px solid var(--color-border);
+}
+
+.prose-panchos blockquote {
+  border-left: 2px solid var(--color-gold);
+  color: var(--color-muted);
+  padding-left: 1rem;
+}
+
+.prose-panchos iframe {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border: 1px solid var(--color-border);
+}
+
+::selection {
+  background: var(--color-gold);
+  color: #05020a;
 }
