@@ -1,11 +1,4 @@
-import DOMPurify from "isomorphic-dompurify";
-
-DOMPurify.addHook("afterSanitizeAttributes", (node) => {
-  if (node.tagName === "A") {
-    node.setAttribute("target", "_blank");
-    node.setAttribute("rel", "noopener noreferrer");
-  }
-});
+import sanitizeHtml from "sanitize-html";
 
 const ALLOWED_TAGS = [
   "p",
@@ -22,9 +15,19 @@ const ALLOWED_TAGS = [
   "blockquote",
 ];
 
-const ALLOWED_ATTR = ["href"];
-
 /** Sanitizes admin-authored post HTML down to a small, safe formatting subset. */
 export function sanitizePostContent(html: string): string {
-  return DOMPurify.sanitize(html, { ALLOWED_TAGS, ALLOWED_ATTR });
+  return sanitizeHtml(html, {
+    allowedTags: ALLOWED_TAGS,
+    allowedAttributes: {
+      a: ["href"],
+    },
+    allowedSchemes: ["http", "https", "mailto"],
+    transformTags: {
+      a: sanitizeHtml.simpleTransform("a", {
+        target: "_blank",
+        rel: "noopener noreferrer",
+      }),
+    },
+  });
 }
