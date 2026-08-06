@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
 import { SiteHeader } from "@/components/SiteHeader";
+import { ImageCarousel } from "@/components/ImageCarousel";
 import { getVideoEmbedUrl } from "@/lib/embed";
 import { sanitizePostContent } from "@/lib/sanitize";
 import type { Post } from "@/lib/types";
@@ -19,7 +20,7 @@ async function getPost(slug: string): Promise<Post | null> {
     .eq("is_published", true)
     .single();
 
-  return data;
+  return data ? { ...data, images: data.images ?? [] } : null;
 }
 
 export async function generateMetadata({
@@ -49,13 +50,13 @@ export async function generateMetadata({
       description,
       type: "article",
       publishedTime: post.created_at,
-      images: [{ url: post.cover_image || "/panchosspacelogo.png" }],
+      images: [{ url: post.images[0] || "/panchosspacelogo.png" }],
     },
     twitter: {
       card: "summary_large_image",
       title: post.title,
       description,
-      images: [post.cover_image || "/panchosspacelogo.png"],
+      images: [post.images[0] || "/panchosspacelogo.png"],
     },
   };
 }
@@ -93,15 +94,8 @@ export default async function PostPage({ params }: Props) {
           </header>
 
           <div className="mb-8 space-y-4">
-            {post.cover_image && (
-              <div className="flex h-72 w-full items-center justify-center overflow-hidden rounded-lg border border-border bg-panel-2 sm:h-96">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={post.cover_image}
-                  alt={post.title}
-                  className="h-full w-full object-contain"
-                />
-              </div>
+            {post.images.length > 0 && (
+              <ImageCarousel images={post.images} alt={post.title} />
             )}
 
             {videoEmbedUrl && (

@@ -12,7 +12,7 @@ create table if not exists public.posts (
   title text not null,
   slug text not null unique,
   content text not null,
-  cover_image text,
+  images text[] not null default '{}',
   audio_url text,
   video_url text,
   user_id uuid not null references auth.users (id) on delete cascade,

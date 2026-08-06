@@ -51,9 +51,8 @@ export function PostForm({ userId, initialPost }: Props) {
   const [slug, setSlug] = useState(initialPost?.slug ?? "");
   const [slugTouched, setSlugTouched] = useState(isEditing);
   const [content, setContent] = useState(initialPost?.content ?? "");
-  const [coverImage, setCoverImage] = useState(
-    initialPost?.cover_image ?? "",
-  );
+  const [images, setImages] = useState<string[]>(initialPost?.images ?? []);
+  const [imageLink, setImageLink] = useState("");
   const [audioUrl, setAudioUrl] = useState(initialPost?.audio_url ?? "");
   const [videoUrl, setVideoUrl] = useState(initialPost?.video_url ?? "");
   const [isPublished, setIsPublished] = useState(
@@ -133,13 +132,28 @@ export function PostForm({ userId, initialPost }: Props) {
     return publicUrl;
   }
 
-  async function handleCoverUpload(file: File) {
+  function addImage(url: string) {
+    setImages((prev) => (prev.length >= 3 ? prev : [...prev, url]));
+  }
+
+  function removeImage(index: number) {
+    setImages((prev) => prev.filter((_, i) => i !== index));
+  }
+
+  function handleAddImageLink() {
+    const url = imageLink.trim();
+    if (!url) return;
+    addImage(url);
+    setImageLink("");
+  }
+
+  async function handleImageFileUpload(file: File) {
     setUploading(true);
     setError(null);
 
     try {
-      setCoverImage(await uploadToBlogMedia(file));
-      setNotice("Cover image uploaded.");
+      addImage(await uploadToBlogMedia(file));
+      setNotice("Image uploaded.");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Upload failed.");
     } finally {
@@ -177,7 +191,7 @@ export function PostForm({ userId, initialPost }: Props) {
       title,
       slug,
       content,
-      cover_image: coverImage || null,
+      images,
       audio_url: audioUrl || null,
       video_url: videoUrl || null,
       is_published: isPublished,
@@ -237,35 +251,63 @@ export function PostForm({ userId, initialPost }: Props) {
 
         <div>
           <label className="mb-1 block text-[10px] uppercase tracking-widest text-muted">
-            Cover Image
+            Images ({images.length}/3 — shown as a carousel above the text)
           </label>
-          <div className="flex flex-wrap items-center gap-3">
-            <input
-              type="file"
-              accept="image/*"
-              disabled={uploading}
-              onChange={(e) => {
-                const file = e.target.files?.[0];
-                if (file) handleCoverUpload(file);
-                e.target.value = "";
-              }}
-              className="text-xs text-muted file:mr-3 file:rounded file:border file:border-gold file:bg-transparent file:px-3 file:py-1.5 file:text-xs file:uppercase file:tracking-widest file:text-gold hover:file:bg-gold hover:file:text-black"
-            />
-            <input
-              type="url"
-              value={coverImage}
-              onChange={(e) => setCoverImage(e.target.value)}
-              placeholder="or paste an image URL"
-              className="min-w-0 flex-1 rounded border border-border bg-panel-2 px-3 py-1.5 text-xs text-fg outline-none focus:border-gold"
-            />
-          </div>
-          {coverImage && (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={coverImage}
-              alt="Cover preview"
-              className="mt-3 h-32 w-auto rounded border border-border object-contain"
-            />
+
+          {images.length > 0 && (
+            <div className="mb-3 flex flex-wrap gap-3">
+              {images.map((url, i) => (
+                <div key={url + i} className="relative">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={url}
+                    alt={`Image ${i + 1}`}
+                    className="h-20 w-20 rounded border border-border object-cover"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => removeImage(i)}
+                    aria-label={`Remove image ${i + 1}`}
+                    className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full border border-border bg-panel text-[10px] text-fg hover:border-red-400 hover:text-red-400"
+                  >
+                    ×
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {images.length < 3 && (
+            <div className="flex flex-wrap items-center gap-3">
+              <input
+                type="file"
+                accept="image/*"
+                disabled={uploading}
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) handleImageFileUpload(file);
+                  e.target.value = "";
+                }}
+                className="text-xs text-muted file:mr-3 file:rounded file:border file:border-gold file:bg-transparent file:px-3 file:py-1.5 file:text-xs file:uppercase file:tracking-widest file:text-gold hover:file:bg-gold hover:file:text-black"
+              />
+              <div className="flex min-w-0 flex-1 gap-2">
+                <input
+                  type="url"
+                  value={imageLink}
+                  onChange={(e) => setImageLink(e.target.value)}
+                  placeholder="or paste an image URL"
+                  className="min-w-0 flex-1 rounded border border-border bg-panel-2 px-3 py-1.5 text-xs text-fg outline-none focus:border-gold"
+                />
+                <button
+                  type="button"
+                  onClick={handleAddImageLink}
+                  disabled={!imageLink.trim()}
+                  className="shrink-0 rounded border border-gold px-3 py-1.5 text-[10px] uppercase tracking-widest text-gold hover:bg-gold hover:text-black disabled:opacity-40"
+                >
+                  Add
+                </button>
+              </div>
+            </div>
           )}
         </div>
 

@@ -14,7 +14,7 @@ async function getPublishedPosts(): Promise<Post[]> {
     .eq("is_published", true)
     .order("created_at", { ascending: false });
 
-  return data ?? [];
+  return (data ?? []).map((post) => ({ ...post, images: post.images ?? [] }));
 }
 
 export default async function Home() {
@@ -38,9 +38,9 @@ export default async function Home() {
                 className="panel group flex flex-col overflow-hidden rounded-lg transition-transform hover:-translate-y-1"
               >
                 <div className="relative aspect-square w-full overflow-hidden bg-panel-2">
-                  {post.cover_image ? (
+                  {post.images[0] ? (
                     <Image
-                      src={post.cover_image}
+                      src={post.images[0]}
                       alt={post.title}
                       fill
                       className="object-cover transition-opacity group-hover:opacity-80"

@@ -3,7 +3,7 @@ export type Post = {
   title: string;
   slug: string;
   content: string;
-  cover_image: string | null;
+  images: string[];
   audio_url: string | null;
   video_url: string | null;
   user_id: string;
