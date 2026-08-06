@@ -36,12 +36,13 @@ for select
 to anon, authenticated
 using (is_published = true);
 
--- Authenticated users can also read their own drafts (needed for the admin dashboard)
-create policy "Authors can read their own posts"
+-- Authenticated users can read every post, including drafts — logins are
+-- shared between band members, so the admin dashboard isn't scoped per-user
+create policy "Authenticated users can read all posts"
 on public.posts
 for select
 to authenticated
-using (auth.uid() = user_id);
+using (true);
 
 -- Only authenticated users can create posts, and only as themselves
 create policy "Authenticated users can insert their own posts"
@@ -50,20 +51,20 @@ for insert
 to authenticated
 with check (auth.uid() = user_id);
 
--- Only authenticated users can update their own posts
-create policy "Authenticated users can update their own posts"
+-- Any authenticated user can update any post (shared admin access)
+create policy "Authenticated users can update any post"
 on public.posts
 for update
 to authenticated
-using (auth.uid() = user_id)
-with check (auth.uid() = user_id);
+using (true)
+with check (true);
 
--- Only authenticated users can delete their own posts
-create policy "Authenticated users can delete their own posts"
+-- Any authenticated user can delete any post (shared admin access)
+create policy "Authenticated users can delete any post"
 on public.posts
 for delete
 to authenticated
-using (auth.uid() = user_id);
+using (true);
 
 -- ----------------------------------------------------------------------------
 -- 3. STORAGE — public "blog-media" bucket
