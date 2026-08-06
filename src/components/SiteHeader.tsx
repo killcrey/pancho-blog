@@ -3,8 +3,8 @@ import Link from "next/link";
 
 export function SiteHeader() {
   return (
-    <header className="border-b border-border">
-      <div className="mx-auto flex max-w-4xl items-center justify-between px-4 py-6">
+    <header className="sticky top-0 z-10 border-b border-border bg-bg">
+      <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-6">
         <Link href="/" className="group flex items-center gap-3">
           <Image
             src="/panchosspacelogo.png"

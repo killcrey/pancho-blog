@@ -67,7 +67,7 @@ export default function LoginPage() {
               autoComplete="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full rounded border border-border bg-black/40 px-3 py-2 text-sm text-fg outline-none focus:border-gold"
+              className="w-full rounded border border-border bg-panel-2 px-3 py-2 text-sm text-fg outline-none focus:border-gold"
             />
           </div>
 
@@ -85,7 +85,7 @@ export default function LoginPage() {
               autoComplete="current-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full rounded border border-border bg-black/40 px-3 py-2 text-sm text-fg outline-none focus:border-gold"
+              className="w-full rounded border border-border bg-panel-2 px-3 py-2 text-sm text-fg outline-none focus:border-gold"
             />
           </div>
 

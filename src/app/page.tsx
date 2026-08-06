@@ -24,46 +24,46 @@ export default async function Home() {
     <div className="flex flex-1 flex-col">
       <SiteHeader />
 
-      <main className="mx-auto w-full max-w-4xl flex-1 px-4 py-12">
+      <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-12">
         {posts.length === 0 ? (
           <p className="py-24 text-center text-sm uppercase tracking-widest text-muted">
             No transmissions yet. Check back soon.
           </p>
         ) : (
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+          <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
             {posts.map((post) => (
               <Link
                 key={post.id}
                 href={`/posts/${post.slug}`}
                 className="panel group flex flex-col overflow-hidden rounded-lg transition-transform hover:-translate-y-1"
               >
-                <div className="relative aspect-video w-full overflow-hidden bg-black/60">
+                <div className="relative aspect-square w-full overflow-hidden bg-panel-2">
                   {post.cover_image ? (
                     <Image
                       src={post.cover_image}
                       alt={post.title}
                       fill
                       className="object-cover transition-opacity group-hover:opacity-80"
-                      sizes="(max-width: 640px) 100vw, 50vw"
+                      sizes="(max-width: 1023px) 50vw, 25vw"
                     />
                   ) : (
-                    <div className="flex h-full items-center justify-center text-xs uppercase tracking-widest text-muted">
+                    <div className="flex h-full items-center justify-center text-center text-[10px] uppercase tracking-widest text-muted">
                       No Signal
                     </div>
                   )}
                 </div>
-                <div className="flex flex-1 flex-col gap-2 p-4">
+                <div className="flex flex-1 flex-col gap-1 p-3">
                   <time
                     dateTime={post.created_at}
-                    className="text-xs uppercase tracking-widest text-gold"
+                    className="text-[10px] uppercase tracking-widest text-gold"
                   >
                     {new Date(post.created_at).toLocaleDateString("en-US", {
                       year: "numeric",
-                      month: "long",
+                      month: "short",
                       day: "numeric",
                     })}
                   </time>
-                  <h2 className="text-lg font-semibold leading-snug text-fg group-hover:text-gold transition-colors">
+                  <h2 className="text-sm font-semibold leading-snug text-fg group-hover:text-gold transition-colors">
                     {post.title}
                   </h2>
                 </div>

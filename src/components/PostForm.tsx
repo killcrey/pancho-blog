@@ -39,6 +39,8 @@ export function PostForm({ userId, initialPost }: Props) {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
+  const [videoLink, setVideoLink] = useState("");
+  const [audioLink, setAudioLink] = useState("");
 
   const contentRef = useRef<HTMLTextAreaElement>(null);
 
@@ -117,10 +119,19 @@ export function PostForm({ userId, initialPost }: Props) {
   }
 
   function handleInsertVideoLink() {
-    const url = window.prompt("Paste a YouTube or Vimeo link:");
+    const url = videoLink.trim();
     if (!url) return;
-    insertAtCursor(`${url.trim()}\n`);
-    setNotice("Video link inserted — it will embed automatically when published.");
+    insertAtCursor(`${url}\n`);
+    setVideoLink("");
+    setNotice("Video link inserted — it will embed automatically.");
+  }
+
+  function handleInsertAudioLink() {
+    const url = audioLink.trim();
+    if (!url) return;
+    insertAtCursor(`${url}\n`);
+    setAudioLink("");
+    setNotice("Audio link inserted — it will embed automatically.");
   }
 
   async function handleCoverUpload(file: File) {
@@ -188,7 +199,7 @@ export function PostForm({ userId, initialPost }: Props) {
           required
           value={title}
           onChange={(e) => handleTitleChange(e.target.value)}
-          className="w-full rounded border border-border bg-black/40 px-3 py-2 text-sm text-fg outline-none focus:border-gold"
+          className="w-full rounded border border-border bg-panel-2 px-3 py-2 text-sm text-fg outline-none focus:border-gold"
         />
       </div>
 
@@ -204,7 +215,7 @@ export function PostForm({ userId, initialPost }: Props) {
             setSlugTouched(true);
             setSlug(slugify(e.target.value));
           }}
-          className="w-full rounded border border-border bg-black/40 px-3 py-2 text-sm text-fg outline-none focus:border-gold"
+          className="w-full rounded border border-border bg-panel-2 px-3 py-2 text-sm text-fg outline-none focus:border-gold"
         />
       </div>
 
@@ -234,63 +245,111 @@ export function PostForm({ userId, initialPost }: Props) {
         )}
       </div>
 
-      <div>
-        <div className="mb-1 flex flex-wrap items-center justify-between gap-2">
-          <label className="block text-xs uppercase tracking-widest text-muted">
-            Content (Markdown)
-          </label>
-          <div className="flex flex-wrap items-center gap-2">
-            <label className="cursor-pointer rounded border border-border px-2 py-1 text-[10px] uppercase tracking-widest text-muted hover:border-gold hover:text-gold">
-              {uploading ? "Uploading…" : "Insert Image"}
-              <input
-                type="file"
-                accept="image/*"
-                disabled={uploading}
-                onChange={(e) => {
-                  const file = e.target.files?.[0];
-                  if (file) handleImageUpload(file);
-                  e.target.value = "";
-                }}
-                className="hidden"
-              />
+      <div className="panel space-y-4 rounded-lg p-4">
+        <p className="text-xs uppercase tracking-widest text-muted">
+          Media Tools
+        </p>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <div>
+            <label className="mb-1 block text-[10px] uppercase tracking-widest text-muted">
+              Upload Image
             </label>
-            <label className="cursor-pointer rounded border border-border px-2 py-1 text-[10px] uppercase tracking-widest text-muted hover:border-gold hover:text-gold">
-              {uploading ? "Uploading…" : "Upload Audio"}
-              <input
-                type="file"
-                accept="audio/*"
-                disabled={uploading}
-                onChange={(e) => {
-                  const file = e.target.files?.[0];
-                  if (file) handleAudioUpload(file);
-                  e.target.value = "";
-                }}
-                className="hidden"
-              />
-            </label>
-            <button
-              type="button"
+            <input
+              type="file"
+              accept="image/*"
               disabled={uploading}
-              onClick={handleInsertVideoLink}
-              className="rounded border border-border px-2 py-1 text-[10px] uppercase tracking-widest text-muted hover:border-gold hover:text-gold disabled:opacity-50"
-            >
-              Insert Video Link
-            </button>
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (file) handleImageUpload(file);
+                e.target.value = "";
+              }}
+              className="w-full text-xs text-muted file:mr-3 file:rounded file:border file:border-gold file:bg-transparent file:px-3 file:py-1.5 file:text-xs file:uppercase file:tracking-widest file:text-gold hover:file:bg-gold hover:file:text-black"
+            />
+          </div>
+
+          <div>
+            <label className="mb-1 block text-[10px] uppercase tracking-widest text-muted">
+              Upload Audio
+            </label>
+            <input
+              type="file"
+              accept="audio/*"
+              disabled={uploading}
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (file) handleAudioUpload(file);
+                e.target.value = "";
+              }}
+              className="w-full text-xs text-muted file:mr-3 file:rounded file:border file:border-gold file:bg-transparent file:px-3 file:py-1.5 file:text-xs file:uppercase file:tracking-widest file:text-gold hover:file:bg-gold hover:file:text-black"
+            />
+          </div>
+
+          <div>
+            <label className="mb-1 block text-[10px] uppercase tracking-widest text-muted">
+              Video Link (YouTube / Vimeo)
+            </label>
+            <div className="flex gap-2">
+              <input
+                type="url"
+                value={videoLink}
+                onChange={(e) => setVideoLink(e.target.value)}
+                placeholder="https://youtube.com/watch?v=..."
+                className="w-full rounded border border-border bg-panel-2 px-3 py-1.5 text-xs text-fg outline-none focus:border-gold"
+              />
+              <button
+                type="button"
+                onClick={handleInsertVideoLink}
+                disabled={!videoLink.trim()}
+                className="shrink-0 rounded border border-gold px-3 py-1.5 text-[10px] uppercase tracking-widest text-gold hover:bg-gold hover:text-black disabled:opacity-40"
+              >
+                Embed
+              </button>
+            </div>
+          </div>
+
+          <div>
+            <label className="mb-1 block text-[10px] uppercase tracking-widest text-muted">
+              Audio Link
+            </label>
+            <div className="flex gap-2">
+              <input
+                type="url"
+                value={audioLink}
+                onChange={(e) => setAudioLink(e.target.value)}
+                placeholder="https://example.com/track.mp3"
+                className="w-full rounded border border-border bg-panel-2 px-3 py-1.5 text-xs text-fg outline-none focus:border-gold"
+              />
+              <button
+                type="button"
+                onClick={handleInsertAudioLink}
+                disabled={!audioLink.trim()}
+                className="shrink-0 rounded border border-gold px-3 py-1.5 text-[10px] uppercase tracking-widest text-gold hover:bg-gold hover:text-black disabled:opacity-40"
+              >
+                Embed
+              </button>
+            </div>
           </div>
         </div>
+        <p className="text-xs text-muted">
+          Uploads and links are inserted into the content below on their own
+          line, where they automatically become a real player or image — no
+          HTML needed.
+        </p>
+      </div>
+
+      <div>
+        <label className="mb-1 block text-xs uppercase tracking-widest text-muted">
+          Content (Markdown)
+        </label>
         <textarea
           ref={contentRef}
           required
           rows={18}
           value={content}
           onChange={(e) => setContent(e.target.value)}
-          placeholder="Write in Markdown. To embed media, paste a link on its own line — YouTube/Vimeo links become video players, image links become photos, and audio file links (.mp3, .wav, ...) become audio players. No HTML needed."
-          className="w-full rounded border border-border bg-black/40 px-3 py-2 font-mono text-sm text-fg outline-none focus:border-gold"
+          placeholder="Write in Markdown. Use the Media Tools above to add images, audio, and video — or paste a link on its own line."
+          className="w-full rounded border border-border bg-panel-2 px-3 py-2 font-mono text-sm text-fg outline-none focus:border-gold"
         />
-        <p className="mt-1 text-xs text-muted">
-          Tip: a link on its own line auto-embeds — YouTube/Vimeo become
-          videos, image links become photos, and audio links become players.
-        </p>
       </div>
 
       <div className="flex items-center gap-2">

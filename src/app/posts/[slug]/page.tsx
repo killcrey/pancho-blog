@@ -74,7 +74,7 @@ export default async function PostPage({ params }: Props) {
       <SiteHeader />
 
       <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-12">
-        <article>
+        <article className="panel rounded-lg p-6 sm:p-10">
           <header className="mb-8">
             <time
               dateTime={post.created_at}

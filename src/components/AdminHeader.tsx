@@ -10,7 +10,7 @@ type Props = {
 
 export function AdminHeader({ title, subtitle, children }: Props) {
   return (
-    <header className="border-b border-border">
+    <header className="sticky top-0 z-10 border-b border-border bg-bg">
       <div className="mx-auto flex max-w-4xl items-center justify-between px-4 py-6">
         <Link href="/admin" className="flex items-center gap-3">
           <Image

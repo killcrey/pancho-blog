@@ -5,7 +5,9 @@
   --color-fg: #ffffff;
   --color-gold: #d4af37;
   --color-muted: #a3a3ad;
-  --color-border: rgba(212, 175, 55, 0.25);
+  --color-border: rgba(212, 175, 55, 0.35);
+  --color-panel: #0d0817;
+  --color-panel-2: #140d22;
 }
 
 @theme inline {
@@ -14,6 +16,8 @@
   --color-gold: var(--color-gold);
   --color-muted: var(--color-muted);
   --color-border: var(--color-border);
+  --color-panel: var(--color-panel);
+  --color-panel-2: var(--color-panel-2);
   --font-sans: var(--font-rajdhani);
 }
 
@@ -44,9 +48,8 @@ body {
 }
 
 .panel {
-  background: rgba(10, 6, 18, 0.7);
+  background: var(--color-panel);
   border: 1px solid var(--color-border);
-  backdrop-filter: blur(6px);
 }
 
 .prose-panchos {
