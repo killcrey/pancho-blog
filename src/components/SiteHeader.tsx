@@ -18,12 +18,15 @@ export function SiteHeader() {
             <p className="text-glow text-lg font-semibold uppercase tracking-[0.3em] text-fg">
               The Invisible Panchos
             </p>
-            <p className="text-xs uppercase tracking-[0.4em] text-gold group-hover:text-fg transition-colors">
+            <p className="flex items-center gap-2 text-xs uppercase tracking-[0.4em] text-gold group-hover:text-fg transition-colors">
               Mission Log
+              <span className="terminal-blink font-mono text-red-500">
+                TRANSMITTING
+              </span>
             </p>
           </div>
         </Link>
-        <nav className="flex items-center gap-6 text-xs uppercase tracking-widest text-muted">
+        <nav className="flex items-center gap-6 text-xs uppercase tracking-widest text-fg">
           <Link href="/" className="hover:text-gold transition-colors">
             Dispatches
           </Link>

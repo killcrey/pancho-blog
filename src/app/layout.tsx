@@ -21,9 +21,11 @@ export const metadata: Metadata = {
   openGraph: {
     siteName: "The Invisible Panchos — Mission Log",
     type: "website",
+    images: [{ url: "/panchosspacelogo.png" }],
   },
   twitter: {
     card: "summary_large_image",
+    images: ["/panchosspacelogo.png"],
   },
 };
 

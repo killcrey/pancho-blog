@@ -50,13 +50,13 @@ export async function generateMetadata({
       description,
       type: "article",
       publishedTime: post.created_at,
-      images: post.cover_image ? [{ url: post.cover_image }] : undefined,
+      images: [{ url: post.cover_image || "/panchosspacelogo.png" }],
     },
     twitter: {
       card: "summary_large_image",
       title: post.title,
       description,
-      images: post.cover_image ? [post.cover_image] : undefined,
+      images: [post.cover_image || "/panchosspacelogo.png"],
     },
   };
 }
