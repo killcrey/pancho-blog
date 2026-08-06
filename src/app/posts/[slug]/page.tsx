@@ -20,7 +20,7 @@ async function getPost(slug: string): Promise<Post | null> {
     .eq("is_published", true)
     .single();
 
-  return data ? { ...data, images: data.images ?? [] } : null;
+  return data ? { ...data, images: data.images ?? [], author: data.author ?? null } : null;
 }
 
 export async function generateMetadata({
@@ -91,6 +91,11 @@ export default async function PostPage({ params }: Props) {
             <h1 className="text-glow mt-2 text-3xl font-semibold leading-tight sm:text-4xl">
               {post.title}
             </h1>
+            {post.author && (
+              <p className="mt-1 text-xs uppercase tracking-widest text-muted">
+                by {post.author}
+              </p>
+            )}
           </header>
 
           <div className="mb-8 space-y-4">

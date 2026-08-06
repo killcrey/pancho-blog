@@ -50,6 +50,7 @@ export function PostForm({ userId, initialPost }: Props) {
   const [title, setTitle] = useState(initialPost?.title ?? "");
   const [slug, setSlug] = useState(initialPost?.slug ?? "");
   const [slugTouched, setSlugTouched] = useState(isEditing);
+  const [author, setAuthor] = useState(initialPost?.author ?? "");
   const [content, setContent] = useState(initialPost?.content ?? "");
   const [images, setImages] = useState<string[]>(initialPost?.images ?? []);
   const [imageLink, setImageLink] = useState("");
@@ -199,6 +200,7 @@ export function PostForm({ userId, initialPost }: Props) {
       images,
       audio_url: audioUrl || null,
       video_url: videoUrl || null,
+      author: author.trim() || null,
       is_published: isPublished,
       user_id: userId,
     };
@@ -245,6 +247,19 @@ export function PostForm({ userId, initialPost }: Props) {
             setSlugTouched(true);
             setSlug(slugify(e.target.value));
           }}
+          className="w-full rounded border border-border bg-panel-2 px-3 py-2 text-sm text-fg outline-none focus:border-gold"
+        />
+      </div>
+
+      <div>
+        <label className="mb-1 block text-xs uppercase tracking-widest text-muted">
+          Author (optional — since logins are sometimes shared)
+        </label>
+        <input
+          type="text"
+          value={author}
+          onChange={(e) => setAuthor(e.target.value)}
+          placeholder="e.g. KILLcRey"
           className="w-full rounded border border-border bg-panel-2 px-3 py-2 text-sm text-fg outline-none focus:border-gold"
         />
       </div>

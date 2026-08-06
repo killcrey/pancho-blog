@@ -15,6 +15,7 @@ create table if not exists public.posts (
   images text[] not null default '{}',
   audio_url text,
   video_url text,
+  author text,
   user_id uuid not null references auth.users (id) on delete cascade,
   is_published boolean not null default false,
   created_at timestamptz not null default now()
