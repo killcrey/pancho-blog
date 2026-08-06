@@ -70,21 +70,14 @@ body {
   text-underline-offset: 3px;
 }
 
-.prose-panchos img {
-  display: block;
-  width: auto;
-  height: auto;
-  max-width: 100%;
-  max-height: 28rem;
-  margin: 1.5rem auto;
-  border-radius: 0.5rem;
-  border: 1px solid var(--color-border);
-  object-fit: contain;
+.prose-panchos p {
+  margin: 0 0 1rem;
 }
 
-.prose-panchos audio {
-  width: 100%;
-  margin: 1.5rem 0;
+.prose-panchos ul,
+.prose-panchos ol {
+  margin: 0 0 1rem;
+  padding-left: 1.5rem;
 }
 
 .prose-panchos blockquote {
@@ -93,10 +86,26 @@ body {
   padding-left: 1rem;
 }
 
-.prose-panchos iframe {
+.media-video-wrap {
+  position: relative;
   width: 100%;
   aspect-ratio: 16 / 9;
+  border-radius: 0.5rem;
+  overflow: hidden;
   border: 1px solid var(--color-border);
+}
+
+.media-video-wrap iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+[contenteditable][data-placeholder]:empty::before {
+  content: attr(data-placeholder);
+  color: var(--color-muted);
 }
 
 ::selection {
@@ -116,5 +125,8 @@ body {
 }
 
 .terminal-blink {
-  animation: terminal-blink 1s linear infinite;
+  animation: terminal-blink 2s linear infinite;
+  text-shadow:
+    0 0 6px rgba(239, 68, 68, 0.9),
+    0 0 16px rgba(239, 68, 68, 0.6);
 }

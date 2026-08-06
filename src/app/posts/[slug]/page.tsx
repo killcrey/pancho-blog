@@ -1,11 +1,9 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import ReactMarkdown from "react-markdown";
-import rehypeRaw from "rehype-raw";
-import remarkGfm from "remark-gfm";
 import { createClient } from "@/lib/supabase/server";
 import { SiteHeader } from "@/components/SiteHeader";
-import { autoEmbedMedia } from "@/lib/embed";
+import { getVideoEmbedUrl } from "@/lib/embed";
+import { sanitizePostContent } from "@/lib/sanitize";
 import type { Post } from "@/lib/types";
 
 type Props = {
@@ -35,7 +33,8 @@ export async function generateMetadata({
   }
 
   const description = post.content
-    .replace(/[#*_>`[\]()!]/g, "")
+    .replace(/<[^>]*>/g, " ")
+    .replace(/\s+/g, " ")
     .slice(0, 160)
     .trim();
 
@@ -69,6 +68,8 @@ export default async function PostPage({ params }: Props) {
     notFound();
   }
 
+  const videoEmbedUrl = post.video_url ? getVideoEmbedUrl(post.video_url) : null;
+
   return (
     <div className="flex flex-1 flex-col">
       <SiteHeader />
@@ -91,23 +92,40 @@ export default async function PostPage({ params }: Props) {
             </h1>
           </header>
 
-          {post.cover_image && (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={post.cover_image}
-              alt={post.title}
-              className="mb-8 h-64 w-full rounded-lg border border-border object-cover sm:h-80"
-            />
-          )}
+          <div className="mb-8 space-y-4">
+            {post.cover_image && (
+              <div className="flex h-72 w-full items-center justify-center overflow-hidden rounded-lg border border-border bg-panel-2 sm:h-96">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={post.cover_image}
+                  alt={post.title}
+                  className="h-full w-full object-contain"
+                />
+              </div>
+            )}
 
-          <div className="prose-panchos prose max-w-none">
-            <ReactMarkdown
-              remarkPlugins={[remarkGfm]}
-              rehypePlugins={[rehypeRaw]}
-            >
-              {autoEmbedMedia(post.content)}
-            </ReactMarkdown>
+            {videoEmbedUrl && (
+              <div className="media-video-wrap">
+                <iframe
+                  src={videoEmbedUrl}
+                  title={post.title}
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowFullScreen
+                />
+              </div>
+            )}
+
+            {post.audio_url && (
+              <audio controls src={post.audio_url} className="w-full" />
+            )}
           </div>
+
+          <div
+            className="prose-panchos"
+            dangerouslySetInnerHTML={{
+              __html: sanitizePostContent(post.content),
+            }}
+          />
         </article>
       </main>
     </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import type { Post } from "@/lib/types";
@@ -13,6 +13,28 @@ function slugify(input: string) {
     .replace(/\s+/g, "-")
     .replace(/-+/g, "-")
     .replace(/^-|-$/g, "");
+}
+
+function ToolbarButton({
+  onClick,
+  label,
+  children,
+}: {
+  onClick: () => void;
+  label: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-label={label}
+      title={label}
+      className="rounded border border-border px-2.5 py-1 text-xs text-fg hover:border-gold hover:text-gold"
+    >
+      {children}
+    </button>
+  );
 }
 
 type Props = {
@@ -32,6 +54,8 @@ export function PostForm({ userId, initialPost }: Props) {
   const [coverImage, setCoverImage] = useState(
     initialPost?.cover_image ?? "",
   );
+  const [audioUrl, setAudioUrl] = useState(initialPost?.audio_url ?? "");
+  const [videoUrl, setVideoUrl] = useState(initialPost?.video_url ?? "");
   const [isPublished, setIsPublished] = useState(
     initialPost?.is_published ?? false,
   );
@@ -39,10 +63,15 @@ export function PostForm({ userId, initialPost }: Props) {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
-  const [videoLink, setVideoLink] = useState("");
-  const [audioLink, setAudioLink] = useState("");
 
-  const contentRef = useRef<HTMLTextAreaElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (contentRef.current && initialPost?.content) {
+      contentRef.current.innerHTML = initialPost.content;
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   function handleTitleChange(value: string) {
     setTitle(value);
@@ -51,16 +80,38 @@ export function PostForm({ userId, initialPost }: Props) {
     }
   }
 
-  function insertAtCursor(snippet: string) {
-    const textarea = contentRef.current;
-
-    if (textarea) {
-      const start = textarea.selectionStart ?? content.length;
-      const end = textarea.selectionEnd ?? content.length;
-      setContent(content.slice(0, start) + snippet + content.slice(end));
-    } else {
-      setContent((prev) => `${prev}\n${snippet}`);
+  function syncContent() {
+    if (contentRef.current) {
+      setContent(contentRef.current.innerHTML);
     }
+  }
+
+  function exec(command: string) {
+    contentRef.current?.focus();
+    document.execCommand(command);
+    syncContent();
+  }
+
+  function handleInsertLink() {
+    const url = window.prompt("Enter a URL:");
+    if (!url) return;
+
+    contentRef.current?.focus();
+    const selection = window.getSelection();
+
+    if (!selection || selection.isCollapsed) {
+      const safeUrl = url.replace(/"/g, "&quot;");
+      const safeLabel = url.replace(/</g, "&lt;");
+      document.execCommand(
+        "insertHTML",
+        false,
+        `<a href="${safeUrl}">${safeLabel}</a>`,
+      );
+    } else {
+      document.execCommand("createLink", false, url);
+    }
+
+    syncContent();
   }
 
   async function uploadToBlogMedia(file: File) {
@@ -82,86 +133,44 @@ export function PostForm({ userId, initialPost }: Props) {
     return publicUrl;
   }
 
-  async function handleImageUpload(file: File) {
-    setUploading(true);
-    setError(null);
-
-    try {
-      const publicUrl = await uploadToBlogMedia(file);
-      insertAtCursor(`![${file.name}](${publicUrl})\n`);
-
-      try {
-        await navigator.clipboard.writeText(publicUrl);
-        setNotice("Image uploaded — URL copied to clipboard and inserted below.");
-      } catch {
-        setNotice("Image uploaded and inserted below.");
-      }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Upload failed.");
-    } finally {
-      setUploading(false);
-    }
-  }
-
-  async function handleAudioUpload(file: File) {
-    setUploading(true);
-    setError(null);
-
-    try {
-      const publicUrl = await uploadToBlogMedia(file);
-      insertAtCursor(`${publicUrl}\n`);
-      setNotice("Audio uploaded and inserted below as a player.");
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Upload failed.");
-    } finally {
-      setUploading(false);
-    }
-  }
-
-  function handleInsertVideoLink() {
-    const url = videoLink.trim();
-    if (!url) return;
-    insertAtCursor(`${url}\n`);
-    setVideoLink("");
-    setNotice("Video link inserted — it will embed automatically.");
-  }
-
-  function handleInsertAudioLink() {
-    const url = audioLink.trim();
-    if (!url) return;
-    insertAtCursor(`${url}\n`);
-    setAudioLink("");
-    setNotice("Audio link inserted — it will embed automatically.");
-  }
-
   async function handleCoverUpload(file: File) {
     setUploading(true);
     setError(null);
 
-    const ext = file.name.split(".").pop();
-    const path = `${userId}/${crypto.randomUUID()}.${ext}`;
-
-    const { error: uploadError } = await supabase.storage
-      .from("blog-media")
-      .upload(path, file);
-
-    if (uploadError) {
-      setError(uploadError.message);
+    try {
+      setCoverImage(await uploadToBlogMedia(file));
+      setNotice("Cover image uploaded.");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Upload failed.");
+    } finally {
       setUploading(false);
-      return;
     }
+  }
 
-    const {
-      data: { publicUrl },
-    } = supabase.storage.from("blog-media").getPublicUrl(path);
+  async function handleAudioFileUpload(file: File) {
+    setUploading(true);
+    setError(null);
 
-    setCoverImage(publicUrl);
-    setUploading(false);
+    try {
+      setAudioUrl(await uploadToBlogMedia(file));
+      setNotice("Audio uploaded.");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Upload failed.");
+    } finally {
+      setUploading(false);
+    }
   }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
+
+    const plainTextContent = content.replace(/<[^>]*>/g, "").trim();
+    if (!plainTextContent) {
+      setError("Content is required.");
+      return;
+    }
+
     setSaving(true);
 
     const payload = {
@@ -169,6 +178,8 @@ export function PostForm({ userId, initialPost }: Props) {
       slug,
       content,
       cover_image: coverImage || null,
+      audio_url: audioUrl || null,
+      video_url: videoUrl || null,
       is_published: isPublished,
       user_id: userId,
     };
@@ -219,136 +230,120 @@ export function PostForm({ userId, initialPost }: Props) {
         />
       </div>
 
-      <div>
-        <label className="mb-1 block text-xs uppercase tracking-widest text-muted">
-          Cover Image
-        </label>
-        <div className="flex items-center gap-3">
-          <input
-            type="file"
-            accept="image/*"
-            disabled={uploading}
-            onChange={(e) => {
-              const file = e.target.files?.[0];
-              if (file) handleCoverUpload(file);
-            }}
-            className="text-sm text-muted file:mr-3 file:rounded file:border file:border-gold file:bg-transparent file:px-3 file:py-1.5 file:text-xs file:uppercase file:tracking-widest file:text-gold hover:file:bg-gold hover:file:text-black"
-          />
-        </div>
-        {coverImage && (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={coverImage}
-            alt="Cover preview"
-            className="mt-3 h-32 w-auto rounded border border-border object-cover"
-          />
-        )}
-      </div>
-
-      <div className="panel space-y-4 rounded-lg p-4">
+      <div className="panel space-y-5 rounded-lg p-4">
         <p className="text-xs uppercase tracking-widest text-muted">
-          Media Tools
+          Media (shown above the text)
         </p>
-        <div className="grid gap-4 sm:grid-cols-2">
-          <div>
-            <label className="mb-1 block text-[10px] uppercase tracking-widest text-muted">
-              Upload Image
-            </label>
+
+        <div>
+          <label className="mb-1 block text-[10px] uppercase tracking-widest text-muted">
+            Cover Image
+          </label>
+          <div className="flex flex-wrap items-center gap-3">
             <input
               type="file"
               accept="image/*"
               disabled={uploading}
               onChange={(e) => {
                 const file = e.target.files?.[0];
-                if (file) handleImageUpload(file);
+                if (file) handleCoverUpload(file);
                 e.target.value = "";
               }}
-              className="w-full text-xs text-muted file:mr-3 file:rounded file:border file:border-gold file:bg-transparent file:px-3 file:py-1.5 file:text-xs file:uppercase file:tracking-widest file:text-gold hover:file:bg-gold hover:file:text-black"
+              className="text-xs text-muted file:mr-3 file:rounded file:border file:border-gold file:bg-transparent file:px-3 file:py-1.5 file:text-xs file:uppercase file:tracking-widest file:text-gold hover:file:bg-gold hover:file:text-black"
+            />
+            <input
+              type="url"
+              value={coverImage}
+              onChange={(e) => setCoverImage(e.target.value)}
+              placeholder="or paste an image URL"
+              className="min-w-0 flex-1 rounded border border-border bg-panel-2 px-3 py-1.5 text-xs text-fg outline-none focus:border-gold"
             />
           </div>
+          {coverImage && (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={coverImage}
+              alt="Cover preview"
+              className="mt-3 h-32 w-auto rounded border border-border object-contain"
+            />
+          )}
+        </div>
 
-          <div>
-            <label className="mb-1 block text-[10px] uppercase tracking-widest text-muted">
-              Upload Audio
-            </label>
+        <div>
+          <label className="mb-1 block text-[10px] uppercase tracking-widest text-muted">
+            Audio
+          </label>
+          <div className="flex flex-wrap items-center gap-3">
             <input
               type="file"
               accept="audio/*"
               disabled={uploading}
               onChange={(e) => {
                 const file = e.target.files?.[0];
-                if (file) handleAudioUpload(file);
+                if (file) handleAudioFileUpload(file);
                 e.target.value = "";
               }}
-              className="w-full text-xs text-muted file:mr-3 file:rounded file:border file:border-gold file:bg-transparent file:px-3 file:py-1.5 file:text-xs file:uppercase file:tracking-widest file:text-gold hover:file:bg-gold hover:file:text-black"
+              className="text-xs text-muted file:mr-3 file:rounded file:border file:border-gold file:bg-transparent file:px-3 file:py-1.5 file:text-xs file:uppercase file:tracking-widest file:text-gold hover:file:bg-gold hover:file:text-black"
+            />
+            <input
+              type="url"
+              value={audioUrl}
+              onChange={(e) => setAudioUrl(e.target.value)}
+              placeholder="or paste an audio file URL"
+              className="min-w-0 flex-1 rounded border border-border bg-panel-2 px-3 py-1.5 text-xs text-fg outline-none focus:border-gold"
             />
           </div>
-
-          <div>
-            <label className="mb-1 block text-[10px] uppercase tracking-widest text-muted">
-              Video Link (YouTube / Vimeo)
-            </label>
-            <div className="flex gap-2">
-              <input
-                type="url"
-                value={videoLink}
-                onChange={(e) => setVideoLink(e.target.value)}
-                placeholder="https://youtube.com/watch?v=..."
-                className="w-full rounded border border-border bg-panel-2 px-3 py-1.5 text-xs text-fg outline-none focus:border-gold"
-              />
-              <button
-                type="button"
-                onClick={handleInsertVideoLink}
-                disabled={!videoLink.trim()}
-                className="shrink-0 rounded border border-gold px-3 py-1.5 text-[10px] uppercase tracking-widest text-gold hover:bg-gold hover:text-black disabled:opacity-40"
-              >
-                Embed
-              </button>
-            </div>
-          </div>
-
-          <div>
-            <label className="mb-1 block text-[10px] uppercase tracking-widest text-muted">
-              Audio Link
-            </label>
-            <div className="flex gap-2">
-              <input
-                type="url"
-                value={audioLink}
-                onChange={(e) => setAudioLink(e.target.value)}
-                placeholder="https://example.com/track.mp3"
-                className="w-full rounded border border-border bg-panel-2 px-3 py-1.5 text-xs text-fg outline-none focus:border-gold"
-              />
-              <button
-                type="button"
-                onClick={handleInsertAudioLink}
-                disabled={!audioLink.trim()}
-                className="shrink-0 rounded border border-gold px-3 py-1.5 text-[10px] uppercase tracking-widest text-gold hover:bg-gold hover:text-black disabled:opacity-40"
-              >
-                Embed
-              </button>
-            </div>
-          </div>
+          {audioUrl && (
+            <audio controls src={audioUrl} className="mt-3 w-full" />
+          )}
         </div>
-        <p className="text-xs text-muted">
-          Uploads and links are inserted into the content below on their own
-          line, where they automatically become a real player or image — no
-          HTML needed.
-        </p>
+
+        <div>
+          <label className="mb-1 block text-[10px] uppercase tracking-widest text-muted">
+            Video Link (YouTube / Vimeo)
+          </label>
+          <input
+            type="url"
+            value={videoUrl}
+            onChange={(e) => setVideoUrl(e.target.value)}
+            placeholder="https://youtube.com/watch?v=..."
+            className="w-full rounded border border-border bg-panel-2 px-3 py-1.5 text-xs text-fg outline-none focus:border-gold"
+          />
+        </div>
       </div>
 
       <div>
         <label className="mb-1 block text-xs uppercase tracking-widest text-muted">
-          Content (Markdown)
+          Content
         </label>
-        <textarea
+        <div className="mb-2 flex flex-wrap gap-1.5">
+          <ToolbarButton onClick={() => exec("bold")} label="Bold">
+            <span className="font-bold">B</span>
+          </ToolbarButton>
+          <ToolbarButton onClick={() => exec("italic")} label="Italic">
+            <span className="italic">I</span>
+          </ToolbarButton>
+          <ToolbarButton onClick={() => exec("underline")} label="Underline">
+            <span className="underline">U</span>
+          </ToolbarButton>
+          <ToolbarButton
+            onClick={() => exec("insertUnorderedList")}
+            label="Bulleted list"
+          >
+            • List
+          </ToolbarButton>
+          <ToolbarButton onClick={handleInsertLink} label="Insert link">
+            Link
+          </ToolbarButton>
+        </div>
+        <div
           ref={contentRef}
-          required
-          rows={18}
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-          placeholder="Write in Markdown. Use the Media Tools above to add images, audio, and video — or paste a link on its own line."
-          className="w-full rounded border border-border bg-panel-2 px-3 py-2 font-mono text-sm text-fg outline-none focus:border-gold"
+          contentEditable
+          onInput={syncContent}
+          onBlur={syncContent}
+          data-placeholder="Write your post…"
+          suppressContentEditableWarning
+          className="prose-panchos min-h-[280px] w-full rounded border border-border bg-panel-2 px-3 py-2 text-sm text-fg outline-none focus:border-gold"
         />
       </div>
 

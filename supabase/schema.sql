@@ -13,6 +13,8 @@ create table if not exists public.posts (
   slug text not null unique,
   content text not null,
   cover_image text,
+  audio_url text,
+  video_url text,
   user_id uuid not null references auth.users (id) on delete cascade,
   is_published boolean not null default false,
   created_at timestamptz not null default now()
