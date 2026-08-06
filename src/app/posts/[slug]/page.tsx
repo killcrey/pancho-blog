@@ -5,6 +5,7 @@ import rehypeRaw from "rehype-raw";
 import remarkGfm from "remark-gfm";
 import { createClient } from "@/lib/supabase/server";
 import { SiteHeader } from "@/components/SiteHeader";
+import { autoEmbedMedia } from "@/lib/embed";
 import type { Post } from "@/lib/types";
 
 type Props = {
@@ -95,7 +96,7 @@ export default async function PostPage({ params }: Props) {
             <img
               src={post.cover_image}
               alt={post.title}
-              className="mb-8 w-full rounded-lg border border-border object-cover"
+              className="mb-8 h-64 w-full rounded-lg border border-border object-cover sm:h-80"
             />
           )}
 
@@ -104,7 +105,7 @@ export default async function PostPage({ params }: Props) {
               remarkPlugins={[remarkGfm]}
               rehypePlugins={[rehypeRaw]}
             >
-              {post.content}
+              {autoEmbedMedia(post.content)}
             </ReactMarkdown>
           </div>
         </article>

@@ -23,10 +23,18 @@ export function SiteHeader() {
             </p>
           </div>
         </Link>
-        <nav className="text-xs uppercase tracking-widest text-muted">
+        <nav className="flex items-center gap-6 text-xs uppercase tracking-widest text-muted">
           <Link href="/" className="hover:text-gold transition-colors">
             Dispatches
           </Link>
+          <a
+            href="https://theinvisiblepanchos.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-gold transition-colors"
+          >
+            Base
+          </a>
         </nav>
       </div>
     </header>
