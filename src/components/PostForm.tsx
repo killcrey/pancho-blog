@@ -179,6 +179,11 @@ export function PostForm({ userId, initialPost }: Props) {
     e.preventDefault();
     setError(null);
 
+    if (images.length === 0) {
+      setError("At least one image is required.");
+      return;
+    }
+
     const plainTextContent = content.replace(/<[^>]*>/g, "").trim();
     if (!plainTextContent) {
       setError("Content is required.");
@@ -251,7 +256,8 @@ export function PostForm({ userId, initialPost }: Props) {
 
         <div>
           <label className="mb-1 block text-[10px] uppercase tracking-widest text-muted">
-            Images ({images.length}/3 — shown as a carousel above the text)
+            Images ({images.length}/3, at least 1 required — shown as a
+            carousel above the text)
           </label>
 
           {images.length > 0 && (
@@ -313,7 +319,7 @@ export function PostForm({ userId, initialPost }: Props) {
 
         <div>
           <label className="mb-1 block text-[10px] uppercase tracking-widest text-muted">
-            Audio
+            Audio (optional)
           </label>
           <div className="flex flex-wrap items-center gap-3">
             <input
@@ -342,7 +348,7 @@ export function PostForm({ userId, initialPost }: Props) {
 
         <div>
           <label className="mb-1 block text-[10px] uppercase tracking-widest text-muted">
-            Video Link (YouTube / Vimeo)
+            Video Link (YouTube / Vimeo, optional)
           </label>
           <input
             type="url"
