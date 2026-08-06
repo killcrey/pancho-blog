@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { AdminHeader } from "@/components/AdminHeader";
 import { SignOutButton } from "@/components/SignOutButton";
 import { DeletePostButton } from "@/components/DeletePostButton";
 
@@ -23,27 +24,15 @@ export default async function AdminDashboard() {
 
   return (
     <div className="flex flex-1 flex-col">
-      <header className="border-b border-border">
-        <div className="mx-auto flex max-w-4xl items-center justify-between px-4 py-6">
-          <div>
-            <p className="text-glow text-lg font-semibold uppercase tracking-[0.3em]">
-              Mission Command
-            </p>
-            <p className="text-xs uppercase tracking-widest text-muted">
-              {user.email}
-            </p>
-          </div>
-          <div className="flex items-center gap-3">
-            <Link
-              href="/admin/new"
-              className="rounded border border-gold bg-gold/10 px-3 py-1.5 text-xs font-semibold uppercase tracking-widest text-gold transition-colors hover:bg-gold hover:text-black"
-            >
-              + New Post
-            </Link>
-            <SignOutButton />
-          </div>
-        </div>
-      </header>
+      <AdminHeader title="Mission Command" subtitle={user.email}>
+        <Link
+          href="/admin/new"
+          className="rounded border border-gold bg-gold/10 px-3 py-1.5 text-xs font-semibold uppercase tracking-widest text-gold transition-colors hover:bg-gold hover:text-black"
+        >
+          + New Post
+        </Link>
+        <SignOutButton />
+      </AdminHeader>
 
       <main className="mx-auto w-full max-w-4xl flex-1 px-4 py-10">
         {!posts || posts.length === 0 ? (
