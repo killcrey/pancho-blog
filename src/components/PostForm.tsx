@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import type { Post } from "@/lib/types";
 
@@ -435,13 +436,21 @@ export function PostForm({ userId, initialPost }: Props) {
         </p>
       )}
 
-      <button
-        type="submit"
-        disabled={saving || uploading}
-        className="rounded border border-gold bg-gold/10 px-6 py-2 text-sm font-semibold uppercase tracking-widest text-gold transition-colors hover:bg-gold hover:text-black disabled:opacity-50"
-      >
-        {saving ? "Saving…" : isEditing ? "Save Changes" : "Create Post"}
-      </button>
+      <div className="flex items-center gap-3">
+        <button
+          type="submit"
+          disabled={saving || uploading}
+          className="rounded border border-gold bg-gold/10 px-6 py-2 text-sm font-semibold uppercase tracking-widest text-gold transition-colors hover:bg-gold hover:text-black disabled:opacity-50"
+        >
+          {saving ? "Saving…" : isEditing ? "Save Changes" : "Create Post"}
+        </button>
+        <Link
+          href="/admin"
+          className="rounded border border-border px-6 py-2 text-sm font-semibold uppercase tracking-widest text-muted transition-colors hover:border-gold hover:text-gold"
+        >
+          Cancel
+        </Link>
+      </div>
     </form>
   );
 }
