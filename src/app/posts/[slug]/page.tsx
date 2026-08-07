@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { SiteHeader } from "@/components/SiteHeader";
 import { ImageCarousel } from "@/components/ImageCarousel";
@@ -71,8 +72,34 @@ export default async function PostPage({ params }: Props) {
 
   const videoEmbedUrl = post.video_url ? getVideoEmbedUrl(post.video_url) : null;
 
+  const siteUrl =
+    process.env.NEXT_PUBLIC_SITE_URL ?? "https://blog.theinvisiblepanchos.com";
+
+  const postJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    headline: post.title,
+    datePublished: post.created_at,
+    image: post.images[0] || `${siteUrl}/panchosspacelogo.png`,
+    description: post.content.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim().slice(0, 300),
+    mainEntityOfPage: `${siteUrl}/posts/${post.slug}`,
+    author: {
+      "@type": "Person",
+      name: post.author || "The Invisible Panchos",
+    },
+    publisher: {
+      "@type": "MusicGroup",
+      name: "The Invisible Panchos",
+      url: "https://theinvisiblepanchos.com",
+    },
+  };
+
   return (
     <div className="flex flex-1 flex-col">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(postJsonLd) }}
+      />
       <SiteHeader />
 
       <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-12">
@@ -125,6 +152,15 @@ export default async function PostPage({ params }: Props) {
               __html: sanitizePostContent(post.content),
             }}
           />
+
+          <div className="mt-10 border-t border-border pt-6">
+            <Link
+              href="/"
+              className="inline-flex items-center gap-2 text-xs uppercase tracking-widest text-muted hover:text-gold transition-colors"
+            >
+              ← Back to Dispatches
+            </Link>
+          </div>
         </article>
       </main>
     </div>

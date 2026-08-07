@@ -10,16 +10,32 @@ const rajdhani = Rajdhani({
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://blog.theinvisiblepanchos.com";
 
+const siteDescription =
+  "The official blog of The Invisible Panchos — underground Chicano hip-hop duo KILLcRey & Gene Flo. Boom bap beats, dispatches, and mission updates from San Diego // Sector 619.";
+
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "The Invisible Panchos | Mission Log",
+    default: "The Invisible Panchos | Official Blog",
     template: "%s | The Invisible Panchos",
   },
-  description:
-    "Dispatches, audio frequencies, and mission updates from The Invisible Panchos — KILLcRey & Gene Flo, San Diego // Sector 619.",
+  description: siteDescription,
+  keywords: [
+    "The Invisible Panchos",
+    "hip hop",
+    "Chicano",
+    "Chicano hip hop",
+    "underground hip hop",
+    "boom bap hip hop",
+    "KILLcRey",
+    "Gene Flo",
+    "San Diego hip hop",
+  ],
+  alternates: {
+    canonical: "/",
+  },
   openGraph: {
-    siteName: "The Invisible Panchos — Mission Log",
+    siteName: "The Invisible Panchos — Official Blog",
     type: "website",
     images: [{ url: "/panchosspacelogo.png" }],
   },
@@ -29,13 +45,34 @@ export const metadata: Metadata = {
   },
 };
 
+const siteJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Blog",
+  name: "The Invisible Panchos — Official Blog",
+  url: siteUrl,
+  description: siteDescription,
+  inLanguage: "en",
+  publisher: {
+    "@type": "MusicGroup",
+    name: "The Invisible Panchos",
+    genre: ["Hip Hop", "Chicano Hip Hop", "Underground Hip Hop", "Boom Bap Hip Hop"],
+    url: "https://theinvisiblepanchos.com",
+  },
+};
+
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
       className={`${rajdhani.variable} h-full antialiased`}
     >
-      <body className="bg-panchos min-h-full flex flex-col">{children}</body>
+      <body className="bg-panchos min-h-full flex flex-col">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(siteJsonLd) }}
+        />
+        {children}
+      </body>
     </html>
   );
 }

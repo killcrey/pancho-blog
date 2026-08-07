@@ -6,6 +6,8 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import type { Post } from "@/lib/types";
 
+const MAX_IMAGES = 5;
+
 function slugify(input: string) {
   return input
     .toLowerCase()
@@ -135,7 +137,7 @@ export function PostForm({ userId, initialPost }: Props) {
   }
 
   function addImage(url: string) {
-    setImages((prev) => (prev.length >= 3 ? prev : [...prev, url]));
+    setImages((prev) => (prev.length >= MAX_IMAGES ? prev : [...prev, url]));
   }
 
   function removeImage(index: number) {
@@ -272,8 +274,8 @@ export function PostForm({ userId, initialPost }: Props) {
 
         <div>
           <label className="mb-1 block text-[10px] uppercase tracking-widest text-muted">
-            Images ({images.length}/3, at least 1 required — shown as a
-            carousel above the text)
+            Images ({images.length}/{MAX_IMAGES}, at least 1 required — shown
+            as a carousel above the text)
           </label>
 
           {images.length > 0 && (
@@ -299,7 +301,7 @@ export function PostForm({ userId, initialPost }: Props) {
             </div>
           )}
 
-          {images.length < 3 && (
+          {images.length < MAX_IMAGES && (
             <div className="flex flex-wrap items-center gap-3">
               <input
                 type="file"

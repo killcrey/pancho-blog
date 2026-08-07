@@ -6,14 +6,8 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     * - image files
-     */
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
-  ],
+  // Only /admin needs an auth check on every request — public pages
+  // (home, posts, sitemap, etc.) shouldn't pay for a Supabase round-trip
+  // they never use.
+  matcher: ["/admin/:path*"],
 };
