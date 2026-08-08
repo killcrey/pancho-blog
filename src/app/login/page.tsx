@@ -56,7 +56,7 @@ export default function LoginPage() {
           <div>
             <label
               htmlFor="email"
-              className="mb-1 block text-xs uppercase tracking-widest text-muted"
+              className="mb-1 block text-xs font-semibold uppercase tracking-widest text-gold"
             >
               Email
             </label>
@@ -74,7 +74,7 @@ export default function LoginPage() {
           <div>
             <label
               htmlFor="password"
-              className="mb-1 block text-xs uppercase tracking-widest text-muted"
+              className="mb-1 block text-xs font-semibold uppercase tracking-widest text-gold"
             >
               Password
             </label>

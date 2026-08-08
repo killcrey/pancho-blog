@@ -226,7 +226,7 @@ export function PostForm({ userId, initialPost }: Props) {
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <div>
-        <label className="mb-1 block text-xs uppercase tracking-widest text-muted">
+        <label className="mb-1 block text-xs font-semibold uppercase tracking-widest text-gold">
           Title
         </label>
         <input
@@ -239,7 +239,7 @@ export function PostForm({ userId, initialPost }: Props) {
       </div>
 
       <div>
-        <label className="mb-1 block text-xs uppercase tracking-widest text-muted">
+        <label className="mb-1 block text-xs font-semibold uppercase tracking-widest text-gold">
           Slug
         </label>
         <input
@@ -255,7 +255,7 @@ export function PostForm({ userId, initialPost }: Props) {
       </div>
 
       <div>
-        <label className="mb-1 block text-xs uppercase tracking-widest text-muted">
+        <label className="mb-1 block text-xs font-semibold uppercase tracking-widest text-gold">
           Author (optional — since logins are sometimes shared)
         </label>
         <input
@@ -268,12 +268,12 @@ export function PostForm({ userId, initialPost }: Props) {
       </div>
 
       <div className="panel space-y-5 rounded-lg p-4">
-        <p className="text-xs uppercase tracking-widest text-muted">
+        <p className="text-xs font-semibold uppercase tracking-widest text-gold">
           Media (shown above the text)
         </p>
 
         <div>
-          <label className="mb-1 block text-[10px] uppercase tracking-widest text-muted">
+          <label className="mb-1 block text-[10px] font-semibold uppercase tracking-widest text-gold">
             Images ({images.length}/{MAX_IMAGES}, at least 1 required — shown
             as a carousel above the text)
           </label>
@@ -336,7 +336,7 @@ export function PostForm({ userId, initialPost }: Props) {
         </div>
 
         <div>
-          <label className="mb-1 block text-[10px] uppercase tracking-widest text-muted">
+          <label className="mb-1 block text-[10px] font-semibold uppercase tracking-widest text-gold">
             Audio (optional)
           </label>
           <div className="flex flex-wrap items-center gap-3">
@@ -365,7 +365,7 @@ export function PostForm({ userId, initialPost }: Props) {
         </div>
 
         <div>
-          <label className="mb-1 block text-[10px] uppercase tracking-widest text-muted">
+          <label className="mb-1 block text-[10px] font-semibold uppercase tracking-widest text-gold">
             Video Link (YouTube / Vimeo, optional)
           </label>
           <input
@@ -379,7 +379,7 @@ export function PostForm({ userId, initialPost }: Props) {
       </div>
 
       <div>
-        <label className="mb-1 block text-xs uppercase tracking-widest text-muted">
+        <label className="mb-1 block text-xs font-semibold uppercase tracking-widest text-gold">
           Content
         </label>
         <div className="mb-2 flex flex-wrap gap-1.5">
