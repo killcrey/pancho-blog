@@ -30,7 +30,7 @@ export default async function Home() {
             No transmissions yet. Check back soon.
           </p>
         ) : (
-          <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
+          <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-4">
             {posts.map((post) => (
               <Link
                 key={post.id}
@@ -44,7 +44,7 @@ export default async function Home() {
                       alt={post.title}
                       fill
                       className="object-cover transition-opacity group-hover:opacity-80"
-                      sizes="(max-width: 1023px) 50vw, 25vw"
+                      sizes="(max-width: 767px) 50vw, 25vw"
                     />
                   ) : (
                     <div className="flex h-full items-center justify-center text-center text-[10px] uppercase tracking-widest text-muted">
