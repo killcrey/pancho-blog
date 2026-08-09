@@ -31,9 +31,17 @@ export function AdminHeader({ title, subtitle, children }: Props) {
             )}
           </div>
         </Link>
-        {children && (
-          <div className="flex items-center gap-3">{children}</div>
-        )}
+        <div className="flex items-center gap-3">
+          <a
+            href="/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="rounded border border-border px-3 py-1.5 text-xs uppercase tracking-widest text-muted transition-colors hover:border-gold hover:text-gold"
+          >
+            Blog
+          </a>
+          {children}
+        </div>
       </div>
     </header>
   );
