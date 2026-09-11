@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
+import { compressImage } from "@/lib/compressImage";
 import type { Post } from "@/lib/types";
 
 const MAX_IMAGES = 5;
@@ -117,13 +118,16 @@ export function PostForm({ userId, initialPost }: Props) {
     syncContent();
   }
 
-  async function uploadToBlogMedia(file: File) {
-    const ext = file.name.split(".").pop();
+  async function uploadBlobToBlogMedia(
+    blob: Blob,
+    ext: string,
+    contentType: string,
+  ) {
     const path = `${userId}/${crypto.randomUUID()}.${ext}`;
 
     const { error: uploadError } = await supabase.storage
       .from("blog-media")
-      .upload(path, file);
+      .upload(path, blob, { contentType, cacheControl: "2592000" });
 
     if (uploadError) {
       throw uploadError;
@@ -134,6 +138,14 @@ export function PostForm({ userId, initialPost }: Props) {
     } = supabase.storage.from("blog-media").getPublicUrl(path);
 
     return publicUrl;
+  }
+
+  async function uploadToBlogMedia(file: File) {
+    return uploadBlobToBlogMedia(
+      file,
+      file.name.split(".").pop() ?? "bin",
+      file.type || "application/octet-stream",
+    );
   }
 
   function addImage(url: string) {
@@ -156,7 +168,8 @@ export function PostForm({ userId, initialPost }: Props) {
     setError(null);
 
     try {
-      addImage(await uploadToBlogMedia(file));
+      const compressed = await compressImage(file);
+      addImage(await uploadBlobToBlogMedia(compressed, "jpg", "image/jpeg"));
       setNotice("Image uploaded.");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Upload failed.");
