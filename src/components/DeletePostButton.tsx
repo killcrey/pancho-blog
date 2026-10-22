@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { revalidatePublicPages } from "@/app/actions";
 
 export function DeletePostButton({ postId }: { postId: string }) {
   const router = useRouter();
@@ -21,6 +22,7 @@ export function DeletePostButton({ postId }: { postId: string }) {
       return;
     }
 
+    await revalidatePublicPages();
     router.refresh();
   }
 

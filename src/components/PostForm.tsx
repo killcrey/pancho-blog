@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { compressImage } from "@/lib/compressImage";
+import { revalidatePublicPages } from "@/app/actions";
 import type { Post } from "@/lib/types";
 
 const MAX_IMAGES = 5;
@@ -232,6 +233,7 @@ export function PostForm({ userId, initialPost }: Props) {
       return;
     }
 
+    await revalidatePublicPages();
     router.push("/admin");
     router.refresh();
   }

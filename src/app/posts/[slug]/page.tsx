@@ -1,19 +1,30 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/server";
+import { createPublicClient } from "@/lib/supabase/public";
 import { SiteHeader } from "@/components/SiteHeader";
 import { ImageCarousel } from "@/components/ImageCarousel";
 import { getVideoEmbedUrl } from "@/lib/embed";
 import { sanitizePostContent } from "@/lib/sanitize";
 import type { Post } from "@/lib/types";
 
+export const revalidate = 60;
+
+export async function generateStaticParams() {
+  const { data } = await createPublicClient()
+    .from("posts")
+    .select("slug")
+    .eq("is_published", true);
+
+  return (data ?? []).map((post) => ({ slug: post.slug }));
+}
+
 type Props = {
   params: Promise<{ slug: string }>;
 };
 
 async function getPost(slug: string): Promise<Post | null> {
-  const supabase = await createClient();
+  const supabase = createPublicClient();
   const { data } = await supabase
     .from("posts")
     .select("*")

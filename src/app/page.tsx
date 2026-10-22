@@ -1,13 +1,13 @@
 import Image from "next/image";
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/server";
+import { createPublicClient } from "@/lib/supabase/public";
 import { SiteHeader } from "@/components/SiteHeader";
 import type { Post } from "@/lib/types";
 
 export const revalidate = 60;
 
 async function getPublishedPosts(): Promise<Post[]> {
-  const supabase = await createClient();
+  const supabase = createPublicClient();
   const { data } = await supabase
     .from("posts")
     .select("*")

@@ -1,11 +1,13 @@
 import type { MetadataRoute } from "next";
-import { createClient } from "@/lib/supabase/server";
+import { createPublicClient } from "@/lib/supabase/public";
+
+export const revalidate = 3600;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const siteUrl =
     process.env.NEXT_PUBLIC_SITE_URL ?? "https://blog.theinvisiblepanchos.com";
 
-  const supabase = await createClient();
+  const supabase = createPublicClient();
   const { data: posts } = await supabase
     .from("posts")
     .select("slug, created_at")
