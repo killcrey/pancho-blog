@@ -33,6 +33,12 @@ export function AdminHeader({ title, subtitle, children }: Props) {
         </Link>
         <div className="flex items-center gap-3">
           <a
+            href="https://theinvisiblepanchos.com/admin"
+            className="rounded border border-border px-3 py-1.5 text-xs uppercase tracking-widest text-muted transition-colors hover:border-gold hover:text-gold"
+          >
+            Back to Hub
+          </a>
+          <a
             href="/"
             target="_blank"
             rel="noopener noreferrer"
