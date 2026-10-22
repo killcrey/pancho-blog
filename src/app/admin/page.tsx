@@ -26,7 +26,7 @@ export default async function AdminDashboard() {
       <AdminHeader title="Mission Command" subtitle={user.email}>
         <Link
           href="/admin/new"
-          className="rounded border border-gold bg-gold/10 px-3 py-1.5 text-xs font-semibold uppercase tracking-widest text-gold transition-colors hover:bg-gold hover:text-black"
+          className="rounded border border-gold bg-gold/10 px-2.5 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-gold transition-colors hover:bg-gold hover:text-black sm:px-3 sm:text-xs sm:tracking-widest"
         >
           + New Post
         </Link>
