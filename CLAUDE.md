@@ -30,7 +30,7 @@ src/
   components/
     PostForm.tsx                 the editor — title/slug/author, up to 10 images, audio, video link, contentEditable body
     ImageCarousel.tsx             post-page image carousel + click-to-open lightbox
-    ShareButton.tsx               share button on every home card (icon, overlaid — NOT nested in the card's <Link>) and the post page; opens a portal bottom sheet (portal, because the card wrapper's hover transform would trap a fixed element): "Share link" (copies the URL, plus native share sheet on touch) and "Image for Stories" (1080x1920 JPEG from lib/storyImage.ts — cover, date, title, author, site address; link copied first so it can go in Instagram's Link sticker; phones share the file, desktop downloads it). Instagram has no web share intent, so file share + pasted link is the Instagram path. Not tested on a real phone/Instagram.
+    ShareButton.tsx               share button on every home card (icon, overlaid — NOT nested in the card's <Link>) and the post page; opens a portal bottom sheet (portal, because the card wrapper's hover transform would trap a fixed element): "Share link" (copies the URL, plus native share sheet on touch) and "Image for Stories" (1080x1920 JPEG from lib/storyImage.ts — cover, date, title, author, brand line — no web address printed; link copied first so it can go in Instagram's Link sticker; phones share the file, desktop downloads it). Instagram has no web share intent, so file share + pasted link is the Instagram path. Not tested on a real phone/Instagram.
     SiteHeader.tsx / AdminHeader.tsx   public vs admin nav (admin header has a "Blog" link back to "/")
     SignOutButton.tsx / DeletePostButton.tsx
   lib/

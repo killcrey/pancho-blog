@@ -1,6 +1,7 @@
 // Draws a 1080x1920 Instagram Stories card for a post. Browser-only (canvas).
 // Everything important stays inside Instagram's top/bottom UI margins, and a
-// clear band is left under the site address for a Link sticker.
+// clear band is left under the brand line for a Link sticker. No web address
+// is printed on the image (removed on request).
 
 const W = 1080;
 const H = 1920;
@@ -12,7 +13,6 @@ export type StoryPost = {
   imageUrl: string | null;
   createdAt: string;
   author: string | null;
-  siteHost: string;
 };
 
 function loadImage(src: string): Promise<HTMLImageElement> {
@@ -159,12 +159,6 @@ export async function renderStoryImage(post: StoryPost): Promise<Blob> {
     (ctx as unknown as { letterSpacing: string }).letterSpacing = "8px";
   }
   ctx.fillText("THE INVISIBLE PANCHOS", W / 2, 1530);
-  if ("letterSpacing" in ctx) {
-    (ctx as unknown as { letterSpacing: string }).letterSpacing = "2px";
-  }
-  ctx.fillStyle = "#ffffff";
-  ctx.font = `600 34px ${family}`;
-  ctx.fillText(post.siteHost, W / 2, 1585);
 
   return new Promise((resolve, reject) => {
     canvas.toBlob(

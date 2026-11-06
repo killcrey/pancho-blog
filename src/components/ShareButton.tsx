@@ -134,7 +134,6 @@ export function ShareButton({
         imageUrl,
         createdAt,
         author,
-        siteHost: new URL(SITE_URL).host,
       });
       const copied = await copiedPromise;
       const file = new File([blob], `${slug}-story.jpg`, { type: "image/jpeg" });
