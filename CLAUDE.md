@@ -30,6 +30,7 @@ src/
   components/
     PostForm.tsx                 the editor — title/slug/author, up to 10 images, audio, video link, contentEditable body
     ImageCarousel.tsx             post-page image carousel + click-to-open lightbox
+    ShareButton.tsx               share button on every home card (icon, overlaid — NOT nested in the card's <Link>) and the post page; always copies the post URL, also opens the native share sheet on touch devices (Instagram has no web share intent, so the pasted link is the Instagram path)
     SiteHeader.tsx / AdminHeader.tsx   public vs admin nav (admin header has a "Blog" link back to "/")
     SignOutButton.tsx / DeletePostButton.tsx
   lib/

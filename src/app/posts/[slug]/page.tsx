@@ -4,6 +4,7 @@ import Link from "next/link";
 import { createPublicClient } from "@/lib/supabase/public";
 import { SiteHeader } from "@/components/SiteHeader";
 import { ImageCarousel } from "@/components/ImageCarousel";
+import { ShareButton } from "@/components/ShareButton";
 import { getVideoEmbedUrl } from "@/lib/embed";
 import { sanitizePostContent } from "@/lib/sanitize";
 import type { Post } from "@/lib/types";
@@ -164,13 +165,14 @@ export default async function PostPage({ params }: Props) {
             }}
           />
 
-          <div className="mt-10 border-t border-border pt-6">
+          <div className="mt-10 flex flex-wrap items-center justify-between gap-4 border-t border-border pt-6">
             <Link
               href="/"
               className="inline-flex items-center gap-2 text-xs uppercase tracking-widest text-muted hover:text-gold transition-colors"
             >
               ← Back to Dispatches
             </Link>
+            <ShareButton slug={post.slug} title={post.title} />
           </div>
         </article>
       </main>

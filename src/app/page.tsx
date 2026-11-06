@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { createPublicClient } from "@/lib/supabase/public";
 import { SiteHeader } from "@/components/SiteHeader";
+import { ShareButton } from "@/components/ShareButton";
 import type { Post } from "@/lib/types";
 
 export const revalidate = 60;
@@ -32,10 +33,16 @@ export default async function Home() {
         ) : (
           <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-4">
             {posts.map((post) => (
-              <Link
+              <div
                 key={post.id}
+                className="relative transition-transform hover:-translate-y-1"
+              >
+              <div className="absolute right-2 top-2 z-10">
+                <ShareButton slug={post.slug} title={post.title} variant="icon" />
+              </div>
+              <Link
                 href={`/posts/${post.slug}`}
-                className="panel group flex flex-col overflow-hidden rounded-lg transition-transform hover:-translate-y-1"
+                className="panel group flex h-full flex-col overflow-hidden rounded-lg"
               >
                 <div className="relative aspect-square w-full overflow-hidden bg-panel-2">
                   {post.images[0] ? (
@@ -68,6 +75,7 @@ export default async function Home() {
                   </h2>
                 </div>
               </Link>
+              </div>
             ))}
           </div>
         )}
