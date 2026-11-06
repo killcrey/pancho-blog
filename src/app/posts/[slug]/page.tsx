@@ -172,7 +172,13 @@ export default async function PostPage({ params }: Props) {
             >
               ← Back to Dispatches
             </Link>
-            <ShareButton slug={post.slug} title={post.title} />
+            <ShareButton
+              slug={post.slug}
+              title={post.title}
+              imageUrl={post.images[0] ?? null}
+              createdAt={post.created_at}
+              author={post.author}
+            />
           </div>
         </article>
       </main>

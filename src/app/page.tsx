@@ -38,7 +38,14 @@ export default async function Home() {
                 className="relative transition-transform hover:-translate-y-1"
               >
               <div className="absolute right-2 top-2 z-10">
-                <ShareButton slug={post.slug} title={post.title} variant="icon" />
+                <ShareButton
+                  slug={post.slug}
+                  title={post.title}
+                  imageUrl={post.images[0] ?? null}
+                  createdAt={post.created_at}
+                  author={post.author}
+                  variant="icon"
+                />
               </div>
               <Link
                 href={`/posts/${post.slug}`}
