@@ -28,7 +28,7 @@ src/
     admin/edit/[id]/page.tsx      edit post (renders PostForm with initialPost)
     auth/callback/route.ts        OAuth/magic-link code exchange (unused by current email/password flow, kept for future)
   components/
-    PostForm.tsx                 the editor — title/slug/author, up to 5 images, audio, video link, contentEditable body
+    PostForm.tsx                 the editor — title/slug/author, up to 10 images, audio, video link, contentEditable body
     ImageCarousel.tsx             post-page image carousel + click-to-open lightbox
     SiteHeader.tsx / AdminHeader.tsx   public vs admin nav (admin header has a "Blog" link back to "/")
     SignOutButton.tsx / DeletePostButton.tsx
@@ -62,7 +62,7 @@ No test command. No `tailwind.config.js` — theme edits go in `globals.css`.
 - **State**: no global state lib. Local `useState`/`useEffect` per component. Forms are uncontrolled where it matters (`contentEditable` body synced to state only on `input`/`blur`, never re-driven by React render, to avoid cursor jumps).
 - **Data fetching**: server components query Supabase directly (`await createClient()` from `lib/supabase/server`). Client mutations (`PostForm`, `DeletePostButton`, `SignOutButton`) use `lib/supabase/client` + `router.refresh()`. No API route layer for CRUD.
 - **Auth model**: RLS is **not** per-user. Any authenticated user can read/update/delete **any** post — logins are shared/rotated between band members by design. Don't reintroduce `auth.uid() = user_id` scoping on admin queries or policies.
-- **Media model**: posts have `images text[]` (max 5, enforced client-side via `MAX_IMAGES` in `PostForm.tsx`, ≥1 required), `audio_url text`, `video_url text` — all optional except images. These render as a fixed block *above* the content body (carousel → video → audio → text), never inline in content. Content itself never contains media markup — no Markdown image syntax, no raw `<img>`/`<iframe>` typed by the admin.
+- **Media model**: posts have `images text[]` (max 10, enforced client-side via `MAX_IMAGES` in `PostForm.tsx`, ≥1 required), `audio_url text`, `video_url text` — all optional except images. These render as a fixed block *above* the content body (carousel → video → audio → text), never inline in content. Content itself never contains media markup — no Markdown image syntax, no raw `<img>`/`<iframe>` typed by the admin.
 - **Images**: any new large static asset goes through `sharp` (resize + recompress) before landing in `public/` — see git history for the compression pass.
 
 ## Deployment Protocol

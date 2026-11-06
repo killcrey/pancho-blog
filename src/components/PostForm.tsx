@@ -8,7 +8,7 @@ import { compressImage } from "@/lib/compressImage";
 import { revalidatePublicPages } from "@/app/actions";
 import type { Post } from "@/lib/types";
 
-const MAX_IMAGES = 5;
+const MAX_IMAGES = 10;
 
 function slugify(input: string) {
   return input
