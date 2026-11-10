@@ -4,3 +4,10 @@
 
 [[plugins]]
   package = "@netlify/plugin-nextjs"
+
+# The default Netlify address should never be the one people (or search engines) land on: send it to the real domain, path kept.
+[[redirects]]
+  from = "https://panchos-blog.netlify.app/*"
+  to = "https://blog.theinvisiblepanchos.com/:splat"
+  status = 301
+  force = true

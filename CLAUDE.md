@@ -70,6 +70,7 @@ No test command. No `tailwind.config.js` — theme edits go in `globals.css`.
 - Netlify auto-deploys `main`. Build = `npm run build`, publish = `.next`, `@netlify/plugin-nextjs` required (already in `netlify.toml` + devDependencies).
 - Env vars (Netlify dashboard, not committed): `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `NEXT_PUBLIC_SITE_URL` (set to `https://blog.theinvisiblepanchos.com`, used for canonical/OG/sitemap).
 - DNS: `blog.theinvisiblepanchos.com` → CNAME → `panchos-blog.netlify.app` (IONOS).
+- **`NEXT_PUBLIC_SITE_URL` was wrong on Netlify until 2026-11-09**: it was set to the `panchos-blog.netlify.app` address, so every canonical/OG/sitemap/share URL pointed there. Fixed in the dashboard (value must be `https://blog.theinvisiblepanchos.com`, then "Deploy project without cache" because `NEXT_PUBLIC_` values are baked in at build time); verified live. `netlify.toml` also 301-redirects `https://panchos-blog.netlify.app/*` to the real domain (`force = true`), so the default address no longer serves the blog.
 - Supabase project is **not** managed via CLI/migrations-as-code in CI — every `supabase/migrations/*.sql` file must be run manually in the Supabase SQL Editor against prod. Adding a migration file to the repo does not apply it.
 - **Push rule**: commit locally; never push to `origin/main` without the user's explicit "CONFIRM PUSH" (user's global rule — an earlier version of this line claiming standing push permission was wrong).
 
